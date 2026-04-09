@@ -15,6 +15,15 @@ pipeline {
             }
         }
 
+        stage('Docker Login') {
+            steps {
+                sh 'docker logout || true'
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-cred', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                }
+            }
+        }
+
         stage('Build Backend Image') {
             steps {
                 dir('backend') {
@@ -29,14 +38,6 @@ pipeline {
                 dir('frontend') {
                     sh 'docker build -t $FRONTEND_IMAGE:$IMAGE_TAG .'
                     sh 'docker tag $FRONTEND_IMAGE:$IMAGE_TAG $FRONTEND_IMAGE:latest'
-                }
-            }
-        }
-
-        stage('Docker Login') {
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub-cred', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
                 }
             }
         }
