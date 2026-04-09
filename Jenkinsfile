@@ -1,12 +1,14 @@
 pipeline {
     agent any
 
-    environment {
+     environment {
         FRONTEND_IMAGE = 'ahilan0143/ecommerce-frontend'
         BACKEND_IMAGE  = 'ahilan0143/ecommerce-backend'
         IMAGE_TAG = "${BUILD_NUMBER}"
         KUBE_NAMESPACE = 'ecommerce'
-    }
+        KUBECONFIG = '/var/lib/jenkins/.kube/config'
+        MINIKUBE_HOME = '/var/lib/jenkins/.minikube'
+   }
 
     stages {
         stage('Checkout') {
